@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUPRA JUMP</title> <!-- Título actualizado -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="../index.html" id="back-button">← Volver</a>
+    <div id="game-container">
+        <!-- Elementos del fondo -->
+        <div id="sky"></div>
+        <div id="stars"></div>
+        <div id="moon"></div>
+        <div id="city"></div>
+        <div id="ground"></div>
+
+        <!-- Elementos del juego -->
+        <div id="game-title">CUPRA JUMP</div> <!-- Título añadido -->
+        <div id="player"></div>
+        <div id="score">Score: 0</div> <!-- Texto de puntuación actualizado -->
+        <div id="obstacle-container"></div>
+        <div id="instructions">Press SPACE to jump over obstacles</div> <!-- Instrucciones añadidas -->
+    </div>
+
+    <!-- Panel de victoria (sin cambios) -->
+    <div id="win-panel" class="hidden">
+        <h2>¡Felicidades! Has ganado.</h2>
+        <h3>Información Desbloqueada: Amortiguadores y Ruedas</h3>
+        <p>
+            El Cupra Tavascan está diseñado para una conducción emocionante y dinámica. Incorpora la avanzada tecnología de chasis adaptativo <strong>DCC Sport</strong>, que ajusta continuamente la firmeza de la suspensión para adaptarse a tu estilo de conducción y a las condiciones de la carretera, ofreciendo un agarre excepcional y una respuesta deportiva. Combinado con la <strong>dirección progresiva</strong>, el Tavascan garantiza una agilidad sorprendente. Además, sus llantas de aleación, disponibles hasta <strong>21 pulgadas</strong> con diseños aerodinámicos, no solo acentúan su carácter imponente, sino que también optimizan el rendimiento y la eficiencia.
+        </p>
+        <button id="close-panel-btn">Cerrar</button>
+    </div>
+
+    <!-- Animación de desbloqueo (sin cambios) -->
+    <div id="unlock-animation" class="hidden">
+        <div class="unlock-piece">C</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

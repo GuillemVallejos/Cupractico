@@ -1,0 +1,340 @@
+/* Estilos generales y variables Cupra */
+:root {
+    --cupra-copper: #e0b070;
+    --cupra-dark-blue: #0a192f;
+    --cupra-grey: #333a4d;
+    --road-color: #4a4a4a;
+    --road-line-color: #b0b0b0;
+    --text-light: #f0f0f0;
+    --text-dark: #050818;
+    --zone-color: rgba(46, 204, 113, 0.4);
+    --zone-border: #2ecc71;
+    --zone-pulse-color: rgba(46, 204, 113, 0.7);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--cupra-dark-blue);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#game-container {
+    position: relative;
+    width: 1000px;
+    height: 500px;
+    background-color: var(--cupra-grey);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    border: 3px solid var(--cupra-copper);
+}
+
+/* Carretera */
+#road {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background-color: var(--road-color);
+    border-top: 5px solid #2a2a2a;
+    /* Add subtle texture */
+    background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+/* Línea central de la carretera */
+.road-line {
+    position: absolute;
+    bottom: 72px;
+    left: 0;
+    width: 200%; /* Double width for seamless animation */
+    height: 6px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--road-line-color),
+        var(--road-line-color) 40px,
+        transparent 40px,
+        transparent 80px
+    );
+    /* Animation for moving lines */
+    animation: moveRoadLines 0.5s linear infinite;
+    will-change: transform; /* Optimize animation */
+}
+
+@keyframes moveRoadLines {
+    from { transform: translateX(0); }
+    to { transform: translateX(-80px); } /* Move one full pattern cycle */
+}
+
+/* Coche */
+#car {
+    position: absolute;
+    bottom: 30px;
+    left: 50px;
+    width: 150px;
+    height: 75px;
+    background-image: url('../assets/cupra-tavascan-side-view.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
+    transition: left 0.05s linear;
+    filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.4));
+    /* Subtle bobbing animation */
+    animation: carBob 2.5s infinite alternate ease-in-out;
+    will-change: transform;
+}
+
+@keyframes carBob {
+    from { transform: translateY(0); }
+    to { transform: translateY(-2px); }
+}
+
+/* Zona Objetivo */
+#target-zone {
+    position: absolute;
+    bottom: 0;
+    /* left será definido por JS */
+    width: 100px;
+    height: 100%;
+    background-color: var(--zone-color);
+    border-left: 3px dashed var(--zone-border);
+    border-right: 3px dashed var(--zone-border);
+    z-index: 5;
+    box-sizing: border-box;
+    /* Pulsing animation */
+    animation: pulseZone 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseZone {
+    from {
+        background-color: var(--zone-color);
+        border-color: var(--zone-border);
+    }
+    to {
+        background-color: var(--zone-pulse-color); /* Brighter green */
+        border-color: var(--text-light); /* Brighter border */
+    }
+}
+
+/* Panel de Control */
+#dashboard {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(10, 25, 47, 0.7);
+    border-radius: 8px;
+    z-index: 20;
+}
+
+#speedometer {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--text-light);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#speedometer #speed-value {
+    color: var(--cupra-copper);
+    font-size: 1.2em;
+}
+
+#brake-button {
+    padding: 15px 35px;
+    font-size: 1.4em;
+    font-weight: bold;
+    background-color: var(--cupra-copper);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+#brake-button:hover {
+    background-color: #c89b63;
+}
+
+#brake-button:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#brake-button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: scale(1); /* Reset active scale */
+}
+
+/* Instrucciones */
+#instructions {
+    position: absolute;
+    bottom: 170px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1em;
+    color: #bdc3c7;
+    background-color: rgba(10, 25, 47, 0.6);
+    padding: 5px 15px;
+    border-radius: 5px;
+    z-index: 20;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for result messages */
+}
+
+/* Styles for result messages */
+#instructions.win {
+    background-color: var(--zone-border);
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+#instructions.lose {
+    background-color: #c0392b; /* Red for lose */
+    color: var(--text-light);
+    font-weight: bold;
+}
+
+/* Panel de Victoria */
+#victory-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8); /* Start smaller for entry animation */
+    width: 500px;
+    padding: 30px 40px;
+    background-color: rgba(10, 25, 47, 0.95);
+    border: 3px solid var(--cupra-copper);
+    border-radius: 15px;
+    box-shadow: 0 0 50px rgba(224, 176, 112, 0.5);
+    text-align: center;
+    z-index: 30;
+    color: var(--text-light);
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    pointer-events: none; /* Prevent interaction while hidden */
+}
+
+#victory-panel:not(.hidden) {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1); /* Animate to full size */
+    pointer-events: auto;
+}
+
+#victory-panel h2 {
+    color: var(--cupra-copper);
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+#brake-info h3 {
+    color: #ddd;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+#brake-info p {
+    line-height: 1.6;
+    margin-bottom: 25px;
+    color: #eee;
+    font-size: 1.1em;
+}
+
+#close-panel-btn {
+    padding: 12px 30px;
+    font-size: 1.1em;
+    background-color: var(--cupra-copper);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-weight: bold;
+}
+
+#close-panel-btn:hover {
+    background-color: #c89b63;
+}
+
+#close-panel-btn:active {
+    transform: scale(0.98);
+}
+
+/* Animación Desbloqueo Letra */
+#unlock-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 31;
+    pointer-events: none; /* Prevent interaction */
+}
+
+.unlock-piece {
+    font-size: 15em;
+    color: var(--cupra-copper);
+    font-weight: bold;
+    text-shadow: 0 0 40px rgba(224, 176, 112, 0.8);
+    /* Animation definition */
+    animation: unlockAppearZoom 1.2s ease-out forwards;
+    opacity: 0; /* Start hidden */
+    transform: scale(0.2) rotate(-90deg); /* Start small and rotated */
+}
+
+@keyframes unlockAppearZoom {
+    0% {
+        opacity: 0;
+        transform: scale(0.2) rotate(-90deg);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.1) rotate(10deg); /* Overshoot */
+    }
+    80% {
+        transform: scale(0.95) rotate(-5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Clase para ocultar elementos */
+.hidden {
+    display: none;
+}
+
+#back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 1000;
+    transition: background-color 0.3s;
+}
+
+#back-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+

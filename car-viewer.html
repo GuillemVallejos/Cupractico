@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cupra Tavascan 3D Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #scene-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #333;
+            background-color: rgba(255,255,255,0.7);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 10;
+        }
+        .back-button:hover {
+            background-color: #e64a19;
+        }
+    </style>
+</head>
+<body>
+    <div id="scene-container"></div>
+    <div class="info">Drag to rotate | Scroll to zoom | Right-click + drag to pan</div>
+    <div class="loading" id="loading">Loading Cupra Tavascan model...</div>
+    <button class="back-button" onclick="window.history.back()">Back</button>
+
+    <!-- Import Three.js and required modules -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // Create a scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf0f0f0);
+
+        // Create a camera
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+        camera.position.set(0, 5, 10);
+
+        // Create a renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        document.getElementById('scene-container').appendChild(renderer.domElement);
+
+        // Add orbit controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 5;
+        controls.maxDistance = 50;
+        controls.maxPolarAngle = Math.PI / 2;
+
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 10, 7.5).normalize();
+        scene.add(directionalLight);
+
+        // Add a secondary light from the other side
+        const secondaryLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        secondaryLight.position.set(-5, 5, -5).normalize();
+        scene.add(secondaryLight);
+
+        // Load the GLTF model
+        const loader = new THREE.GLTFLoader();
+        
+        // Try to load the model with absolute path first
+        const modelPath = './3d/scene.gltf'; // Using relative path with explicit ./ prefix
+        console.log('Attempting to load model from:', modelPath);
+        
+        loader.load(
+            modelPath,
+            function (gltf) {
+                // Hide loading message
+                document.getElementById('loading').style.display = 'none';
+                
+                // Center the model
+                const box = new THREE.Box3().setFromObject(gltf.scene);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+                
+                // Reset the model position to center it at the origin
+                gltf.scene.position.x = -center.x;
+                gltf.scene.position.y = -center.y;
+                gltf.scene.position.z = -center.z;
+                
+                // Adjust camera position based on model size
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const fov = camera.fov * (Math.PI / 180);
+                let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
+                
+                // Set camera position
+                camera.position.z = cameraZ * 1.2;
+                
+                // Update the controls target to model center
+                controls.target.copy(new THREE.Vector3(0, 0, 0));
+                controls.update();
+                
+                // Add model to scene
+                scene.add(gltf.scene);
+            },
+            function (xhr) {
+                // Loading progress
+                if (xhr.lengthComputable) {
+                    const percentComplete = xhr.loaded / xhr.total * 100;
+                    document.getElementById('loading').innerText = `Loading: ${Math.round(percentComplete)}%`;
+                }
+            },
+            function (error) {
+                // Detailed error handling
+                console.error('Error loading model:', error);
+                console.error('Model path attempted:', modelPath);
+                
+                // Try alternate path as fallback
+                const alternatePath = '../3d/scene.gltf';
+                console.log('Attempting fallback path:', alternatePath);
+                
+                loader.load(
+                    alternatePath,
+                    function(gltf) {
+                        // Hide loading message
+                        document.getElementById('loading').style.display = 'none';
+                        
+                        // Center and display model (same code as above)
+                        const box = new THREE.Box3().setFromObject(gltf.scene);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        
+                        gltf.scene.position.x = -center.x;
+                        gltf.scene.position.y = -center.y;
+                        gltf.scene.position.z = -center.z;
+                        
+                        const maxDim = Math.max(size.x, size.y, size.z);
+                        const fov = camera.fov * (Math.PI / 180);
+                        let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
+                        camera.position.z = cameraZ * 1.2;
+                        
+                        controls.target.copy(new THREE.Vector3(0, 0, 0));
+                        controls.update();
+                        
+                        scene.add(gltf.scene);
+                    },
+                    function(xhr) {
+                        if (xhr.lengthComputable) {
+                            const percentComplete = xhr.loaded / xhr.total * 100;
+                            document.getElementById('loading').innerText = `Loading (fallback): ${Math.round(percentComplete)}%`;
+                        }
+                    },
+                    function(secondError) {
+                        console.error('Second attempt failed:', secondError);
+                        document.getElementById('loading').innerText = 'Loading embedded model...';
+                        
+                        // Load GLTF directly from the embedded data
+                        loadEmbeddedModel();
+                    }
+                );
+            }
+        );
+        
+        // Function to load the embedded Tavascan model data
+        function loadEmbeddedModel() {
+            // Create a Blob with the GLTF data
+            const gltfData = {
+              "asset": {
+                "generator": "Sketchfab-16.62.0",
+                "version": "2.0"
+              },
+              "scene": 0,
+              "scenes": [
+                {
+                  "name": "Sketchfab_Scene",
+                  "nodes": [0]
+                }
+              ],
+              "nodes": [
+                {
+                  "children": [1],
+                  "matrix": [
+                    2.220446049250313e-16, 2.220446049250313e-16, -1.0, 0.0,
+                    -1.0, 4.930380657631324e-32, -2.220446049250313e-16, 0.0,
+                    0.0, 1.0, 2.220446049250313e-16, 0.0,
+                    0.0, 0.0, 0.0, 1.0
+                  ],
+                  "name": "Sketchfab_model"
+                },
+                {
+                  "name": "Cupra Tavascan Model"
+                }
+              ]
+            };
+            
+            const blob = new Blob([JSON.stringify(gltfData)], {type: 'application/json'});
+            const objectURL = URL.createObjectURL(blob);
+            
+            // Now create a simplified model since we don't have the binary data
+            createSimplifiedTavascanModel();
+            
+            // Release the object URL
+            URL.revokeObjectURL(objectURL);
+        }
+        
+        function createSimplifiedTavascanModel() {
+            // Create a group to hold all car parts
+            const car = new THREE.Group();
+            
+            // Materials
+            const bodyMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0x0f3160, // Dark blue like Tavascan
+                shininess: 100,
+                specular: 0x333333
+            });
+            
+            const glassMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x000000,
+                transparent: true,
+                opacity: 0.3,
+                metalness: 0.2,
+                roughness: 0,
+                transmission: 0.9
+            });
+            
+            const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xff3300 });
+            const headlightMaterial = new THREE.MeshBasicMaterial({ color: 0xffffee });
+            const wheelMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 30 });
+            const tireMaterial = new THREE.MeshPhongMaterial({ color: 0x222222, shininess: 10 });
+            
+            // Create a more advanced Tavascan-like SUV coupe model
+            // Main body - more curved using BufferGeometry
+            const bodyShape = new THREE.Shape();
+            bodyShape.moveTo(-2.2, 0);
+            bodyShape.lineTo(2.2, 0);
+            bodyShape.lineTo(2.0, 0.8);
+            bodyShape.lineTo(-2.0, 0.8);
+            bodyShape.lineTo(-2.2, 0);
+            
+            const extrudeSettings = {
+                steps: 1,
+                depth: 1.8,
+                bevelEnabled: true,
+                bevelThickness: 0.2,
+                bevelSize: 0.2,
+                bevelOffset: 0,
+                bevelSegments: 5
+            };
+            
+            const bodyGeometry = new THREE.ExtrudeGeometry(bodyShape, extrudeSettings);
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.y = 0.2;
+            body.position.z = -0.9;
+            car.add(body);
+            
+            // Roof with curved design
+            const roofGeometry = new THREE.BoxGeometry(3.2, 0.1, 1.7);
+            const roof = new THREE.Mesh(roofGeometry, bodyMaterial);
+            roof.position.set(-0.3, 1.3, 0);
+            car.add(roof);
+            
+            // Cabin pillars
+            const pillarGeometry = new THREE.BoxGeometry(0.1, 0.8, 0.1);
+            
+            // A-pillars (front)
+            const aPillarLeft = new THREE.Mesh(pillarGeometry, bodyMaterial);
+            aPillarLeft.position.set(-1.5, 0.9, 0.8);
+            aPillarLeft.rotation.z = Math.PI * 0.1;
+            car.add(aPillarLeft);
+            
+            const aPillarRight = aPillarLeft.clone();
+            aPillarRight.position.z = -0.8;
+            car.add(aPillarRight);
+            
+            // B-pillars (middle)
+            const bPillarLeft = new THREE.Mesh(pillarGeometry, bodyMaterial);
+            bPillarLeft.position.set(0.2, 0.9, 0.8);
+            car.add(bPillarLeft);
+            
+            const bPillarRight = bPillarLeft.clone();
+            bPillarRight.position.z = -0.8;
+            car.add(bPillarRight);
+            
+            // C-pillars (rear)
+            const cPillarGeometry = new THREE.BoxGeometry(0.1, 0.8, 0.1);
+            const cPillarLeft = new THREE.Mesh(cPillarGeometry, bodyMaterial);
+            cPillarLeft.position.set(1.5, 0.9, 0.8);
+            cPillarLeft.rotation.z = -Math.PI * 0.15; // Sloped C-pillar
+            car.add(cPillarLeft);
+            
+            const cPillarRight = cPillarLeft.clone();
+            cPillarRight.position.z = -0.8;
+            car.add(cPillarRight);
+            
+            // Hood
+            const hoodGeometry = new THREE.BoxGeometry(1.4, 0.1, 1.7);
+            const hood = new THREE.Mesh(hoodGeometry, bodyMaterial);
+            hood.position.set(-2.1, 0.8, 0);
+            car.add(hood);
+            
+            // Front bumper with CUPRA-like design
+            const bumperGeometry = new THREE.BoxGeometry(0.4, 0.4, 1.9);
+            const bumper = new THREE.Mesh(bumperGeometry, bodyMaterial);
+            bumper.position.set(-2.4, 0.4, 0);
+            car.add(bumper);
+            
+            // Distinctive Cupra grille
+            const grillGeometry = new THREE.BoxGeometry(0.05, 0.3, 1.4);
+            const grill = new THREE.Mesh(grillGeometry, new THREE.MeshPhongMaterial({
+                color: 0x111111,
+                shininess: 80
+            }));
+            grill.position.set(-2.45, 0.5, 0);
+            car.add(grill);
+            
+            // Headlights - CUPRA style (more angular)
+            const headlightGeometry = new THREE.BoxGeometry(0.1, 0.2, 0.5);
+            const headlightLeft = new THREE.Mesh(headlightGeometry, headlightMaterial);
+            headlightLeft.position.set(-2.4, 0.7, -0.6);
+            car.add(headlightLeft);
+            
+            const headlightRight = headlightLeft.clone();
+            headlightRight.position.z = 0.6;
+            car.add(headlightRight);
+            
+            // Daytime running lights (Cupra signature)
+            const drlGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.6);
+            const drlLeft = new THREE.Mesh(drlGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            drlLeft.position.set(-2.42, 0.75, -0.6);
+            car.add(drlLeft);
+            
+            const drlRight = drlLeft.clone();
+            drlRight.position.z = 0.6;
+            car.add(drlRight);
+            
+            // Taillights - connected light bar style
+            const tailLightBarGeometry = new THREE.BoxGeometry(0.1, 0.1, 1.6);
+            const tailLightBar = new THREE.Mesh(tailLightBarGeometry, lightMaterial);
+            tailLightBar.position.set(2.25, 0.8, 0);
+            car.add(tailLightBar);
+            
+            // Windows
+            // Windshield
+            const windshieldGeometry = new THREE.PlaneGeometry(1.3, 1.0);
+            const windshield = new THREE.Mesh(windshieldGeometry, glassMaterial);
+            windshield.position.set(-1.4, 1.15, 0);
+            windshield.rotation.x = Math.PI / 2;
+            windshield.rotation.y = Math.PI / 2;
+            windshield.rotation.z = -Math.PI * 0.1;
+            car.add(windshield);
+            
+            // Rear window
+            const rearWindowGeometry = new THREE.PlaneGeometry(1.0, 0.8);
+            const rearWindow = new THREE.Mesh(rearWindowGeometry, glassMaterial);
+            rearWindow.position.set(1.6, 1.15, 0);
+            rearWindow.rotation.x = Math.PI / 2;
+            rearWindow.rotation.y = Math.PI / 2;
+            rearWindow.rotation.z = Math.PI * 0.2;
+            car.add(rearWindow);
+            
+            // Side windows
+            const sideWindowGeometry = new THREE.PlaneGeometry(2.8, 0.7);
+            const sideWindowLeft = new THREE.Mesh(sideWindowGeometry, glassMaterial);
+            sideWindowLeft.position.set(0, 1.05, 0.85);
+            car.add(sideWindowLeft);
+            
+            const sideWindowRight = sideWindowLeft.clone();
+            sideWindowRight.position.z = -0.85;
+            car.add(sideWindowRight);
+            
+            // Wheels with more detail
+            function createDetailedWheel(x, z) {
+                const wheelGroup = new THREE.Group();
+                
+                // Tire
+                const tireGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.25, 32);
+                tireGeometry.rotateX(Math.PI / 2);
+                const tire = new THREE.Mesh(tireGeometry, tireMaterial);
+                wheelGroup.add(tire);
+                
+                // Rim with spokes
+                const rimGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.26, 16);
+                rimGeometry.rotateX(Math.PI / 2);
+                const rim = new THREE.Mesh(rimGeometry, new THREE.MeshPhongMaterial({
+                    color: 0xcccccc,
+                    shininess: 100,
+                    specular: 0x888888
+                }));
+                wheelGroup.add(rim);
+                
+                // Spokes
+                for (let i = 0; i < 5; i++) {
+                    const spokeGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.26);
+                    const spoke = new THREE.Mesh(spokeGeometry, new THREE.MeshPhongMaterial({
+                        color: 0xcccccc,
+                        shininess: 100
+                    }));
+                    spoke.rotation.z = (Math.PI / 5) * 2 * i;
+                    spoke.position.set(Math.sin(spoke.rotation.z) * 0.15, Math.cos(spoke.rotation.z) * 0.15, 0);
+                    rim.add(spoke);
+                }
+                
+                // Center cap with CUPRA-like logo
+                const capGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.27, 16);
+                capGeometry.rotateX(Math.PI / 2);
+                const cap = new THREE.Mesh(capGeometry, new THREE.MeshPhongMaterial({
+                    color: 0x111111,
+                    shininess: 80
+                }));
+                wheelGroup.add(cap);
+                
+                // Position the wheel
+                wheelGroup.position.set(x, 0.4, z);
+                return wheelGroup;
+            }
+            
+            // Add wheels
+            car.add(createDetailedWheel(-1.5, 0.9));
+            car.add(createDetailedWheel(-1.5, -0.9));
+            car.add(createDetailedWheel(1.5, 0.9));
+            car.add(createDetailedWheel(1.5, -0.9));
+            
+            // Add characteristic CUPRA details
+            // Front splitter
+            const splitterGeometry = new THREE.BoxGeometry(0.4, 0.05, 1.6);
+            const splitter = new THREE.Mesh(splitterGeometry, new THREE.MeshPhongMaterial({
+                color: 0x222222,
+                shininess: 30
+            }));
+            splitter.position.set(-2.4, 0.2, 0);
+            car.add(splitter);
+            
+            // Rear diffuser
+            const diffuserGeometry = new THREE.BoxGeometry(0.4, 0.15, 1.6);
+            const diffuser = new THREE.Mesh(diffuserGeometry, new THREE.MeshPhongMaterial({
+                color: 0x222222,
+                shininess: 30
+            }));
+            diffuser.position.set(2.25, 0.25, 0);
+            car.add(diffuser);
+            
+            // Add the car to the scene
+            car.rotation.y = Math.PI / 4; // Rotate to show more of the design
+            scene.add(car);
+            
+            // Auto-position camera
+            const box = new THREE.Box3().setFromObject(car);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            
+            // Reset model position to center
+            car.position.x = -center.x;
+            car.position.y = -center.y;
+            car.position.z = -center.z;
+            
+            // Set camera position based on model size
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const fov = camera.fov * (Math.PI / 180);
+            let cameraZ = Math.abs(maxDim / Math.sin(fov / 2));
+            camera.position.z = cameraZ * 1.5;
+            camera.position.y = cameraZ * 0.3;
+            
+            // Update controls
+            controls.target.copy(new THREE.Vector3(0, 0, 0));
+            controls.update();
+            
+            // Hide loading message
+            document.getElementById('loading').style.display = 'none';
+            
+            // Animate the car to rotate slowly
+            function rotateCar() {
+                car.rotation.y += 0.002;
+                requestAnimationFrame(rotateCar);
+            }
+            rotateCar();
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function () {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // Update controls for smooth damping
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

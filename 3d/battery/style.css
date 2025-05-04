@@ -1,0 +1,160 @@
+/* Estilos generales */
+:root {
+    --bg-color: #2c3e50;
+    --container-bg: #34495e;
+    --track-bg: #2c3e50;
+    --border-color: #7f8c8d;
+    --text-color: #ecf0f1;
+    --highlight-yellow: #f1c40f;
+    --highlight-orange: #f39c12;
+    --player-green: #2ecc71;
+    --player-green-light: #58d68d;
+    --indicator-border: #c0392b;
+    --progress-bg: #7f8c8d;
+}
+
+body {
+    margin: 0;
+    padding: 20px; /* Add padding */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* Subtle background pattern */
+    background-image: linear-gradient(45deg, rgba(0,0,0,0.03) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.03) 75%, rgba(0,0,0,0.03)),
+                      linear-gradient(-45deg, rgba(0,0,0,0.03) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.03) 75%, rgba(0,0,0,0.03));
+    background-size: 30px 30px;
+}
+
+#game-container {
+    background-color: var(--container-bg);
+    padding: 30px 40px; /* More padding */
+    border-radius: 15px; /* More rounded */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    width: 380px; /* Slightly wider */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+h1 {
+    color: var(--highlight-yellow);
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Pista de carga */
+#charge-track {
+    position: relative;
+    width: 70px; /* Wider track */
+    height: 320px; /* Taller track */
+    background-color: var(--track-bg);
+    margin: 25px auto;
+    border: 3px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* Indicador de carga (el icono de batería que se mueve) */
+#charge-indicator {
+    position: absolute;
+    left: 10px; /* Centered: (70 - 50) / 2 */
+    width: 50px;
+    height: 40px;
+    background-color: var(--highlight-yellow);
+    border: 2px solid var(--indicator-border);
+    border-radius: 5px;
+    box-shadow: 0 0 8px var(--highlight-yellow);
+    bottom: 50%;
+    transition: bottom 0.1s linear;
+    /* Subtle pulse animation */
+    animation: pulseIndicator 2s infinite alternate ease-in-out;
+}
+
+@keyframes pulseIndicator {
+    from { box-shadow: 0 0 8px var(--highlight-yellow); transform: scale(1); }
+    to { box-shadow: 0 0 15px var(--highlight-orange); transform: scale(1.05); }
+}
+
+/* Cargador del jugador (la barra verde) */
+#player-charger {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: rgba(46, 204, 113, 0.6); /* Slightly more transparent */
+    border-top: 3px solid var(--player-green);
+    border-bottom: 3px solid var(--player-green);
+    bottom: 10px;
+    transition: bottom 0.05s linear, background-color 0.1s linear, box-shadow 0.1s linear;
+    box-sizing: border-box; /* Include border in height/width */
+}
+
+/* Style when actively charging (overlapping) */
+#player-charger.charging {
+    background-color: rgba(88, 214, 141, 0.8); /* Brighter green */
+    box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3); /* Inner glow */
+}
+
+/* Barra de progreso de la batería */
+#battery-progress-container {
+    width: 90%; /* Wider */
+    height: 35px; /* Taller */
+    background-color: var(--progress-bg);
+    margin: 30px auto;
+    border-radius: 18px;
+    border: 3px solid var(--text-color);
+    overflow: hidden;
+    position: relative; /* For pseudo-elements */
+}
+
+#battery-progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(to right, var(--highlight-yellow), var(--highlight-orange));
+    border-radius: 15px 0 0 15px;
+    transition: width 0.2s ease-out;
+    position: relative;
+    overflow: hidden; /* Contain the shine */
+}
+
+/* Shine effect on progress bar */
+#battery-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    transform: skewX(-25deg) translateX(-100%);
+    animation: shine 2s infinite linear;
+    opacity: 0;
+}
+
+/* Only show shine when progress > 0 */
+#battery-progress-bar:not([style*="width: 0%"])::after {
+    opacity: 1;
+}
+
+@keyframes shine {
+    0% { transform: skewX(-25deg) translateX(-100%); }
+    100% { transform: skewX(-25deg) translateX(250%); }
+}
+
+#instructions {
+    font-size: 0.9em;
+    color: #bdc3c7;
+    margin-top: 20px;
+}
+
+#charge-level {
+    font-size: 1.2em; /* Larger */
+    font-weight: bold;
+    margin-top: 15px;
+    color: var(--text-color);
+}
+

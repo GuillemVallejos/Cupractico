@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUPRA Braking Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="../index.html" id="back-button">← Volver</a>
+    <div id="game-container">
+        <div id="road">
+            <div id="car"></div>
+            <div id="target-zone"></div>
+            <div class="road-line"></div>
+        </div>
+        <div id="dashboard">
+            <div id="speedometer">Velocidad: <span id="speed-value">100</span> km/h</div>
+            <button id="brake-button">FRENAR</button>
+        </div>
+        <div id="instructions">Pulsa FRENAR para detenerte en la zona objetivo</div>
+    </div>
+
+    <!-- Panel de Victoria (oculto inicialmente) -->
+    <div id="victory-panel" class="hidden">
+        <h2>¡Frenada Perfecta!</h2>
+        <div id="brake-info">
+            <h3>Sistema de Frenos CUPRA</h3>
+            <p>Los frenos del CUPRA Tavascan están diseñados para ofrecer una respuesta precisa y potente, garantizando la máxima seguridad y control incluso en situaciones exigentes. Cuentan con discos ventilados y tecnología avanzada para una disipación óptima del calor y un rendimiento constante.</p>
+            <!-- Más información detallada si se requiere -->
+        </div>
+        <button id="close-panel-btn">Continuar</button>
+    </div>
+
+    <!-- Animación Desbloqueo Letra (oculto inicialmente) -->
+    <div id="unlock-animation" class="hidden">
+        <div class="unlock-piece">U</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

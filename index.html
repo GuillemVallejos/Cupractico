@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>CUPRA - Manual Interactivo</title>
+    <meta name="description" content="Manual interactivo para los modelos de coches CUPRA"/>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16"/>
+    <!-- Importación de fuente personalizada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables y estilos base */
+        :root {
+            --cupra-copper: #C1955B;
+            --cupra-yellow: #FFB81C;
+            --cupra-dark: #1A1A1A;
+            --cupra-gray: #333333;
+            --cupra-light: #F5F5F5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        html, body {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        
+        body {
+            background-color: var(--cupra-dark);
+            color: var(--cupra-light);
+            min-height: 100vh;
+            overflow-y: auto; /* Permitir desplazamiento vertical */
+        }
+        
+        /* Elementos de navegación */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 48px; /* Added right padding to match content margin */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            height: 80px; /* Altura fija para el header */
+        }
+        
+        .logo {
+            height: 7rem; /* Tamaño reducido para evitar que ocupe demasiado espacio */
+            width: auto;
+            margin-top: 1pc;
+        }
+        
+        .language-selector button {
+            background-color: rgba(51, 51, 51, 0.7);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .language-selector button:hover {
+            background-color: var(--cupra-copper);
+        }
+        
+        .language-selector button.active {
+            background-color: var(--cupra-yellow);
+            color: black;
+        }
+        
+        /* Hero section */
+        .hero {
+            min-height: 100vh; /* Cambiado de height a min-height */
+            width: 100%;
+            position: relative;
+            overflow: visible; /* Cambiado de hidden a visible */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 0; /* Updated padding top and bottom to 64px */
+        }
+        
+        .hero-bg {
+            position: fixed; /* Fondo fijo */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            filter: brightness(0.5);
+            z-index: -1;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+            padding: 0 48px 64px; /* Updated padding: top 0, left/right 48px, bottom 64px */
+            z-index: 1;
+            margin-top: 64px; /* Updated top margin to 64px */
+        }
+        
+        .hero-title {
+            font-size: 48px; /* Updated title font size to 48px for desktop */
+            font-weight: 700;
+            color: var(--cupra-yellow);
+            margin-bottom: 1.5rem;
+            margin-top: 80px; /* Position title 80px from top margin */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Montserrat', sans-serif; /* Ensure Montserrat is used */
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+        
+        /* Selector de vehículos */
+        .vehicle-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .vehicle-card {
+            position: relative;
+            width: 280px;
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .vehicle-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--cupra-yellow);
+            box-shadow: 0 10px 20px rgba(255, 184, 28, 0.2);
+        }
+        
+        .vehicle-card.active {
+            border-color: var(--cupra-yellow);
+            box-shadow: 0 0 15px var(--cupra-yellow);
+        }
+        
+        .vehicle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--cupra-copper), transparent);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+        
+        .vehicle-card:hover::before, .vehicle-card.active::before {
+            transform: scaleX(1);
+        }
+        
+        .vehicle-image {
+            width: 100%;
+            height: 140px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .vehicle-card:hover .vehicle-image {
+            transform: scale(1.05);
+        }
+        
+        .vehicle-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        .vehicle-type {
+            color: var(--cupra-copper);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Coming Soon card */
+        .vehicle-card.coming-soon {
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed var(--cupra-copper);
+            background: linear-gradient(145deg, rgba(26,26,26,0.8) 0%, rgba(51,51,51,0.8) 100%);
+        }
+        
+        .coming-soon-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0,0,0,0.6);
+            z-index: 5;
+        }
+        
+        .coming-soon-overlay span {
+            background-color: var(--cupra-yellow);
+            color: var(--cupra-dark);
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: rotate(-15deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: rotate(-15deg) scale(1); }
+            50% { transform: rotate(-15deg) scale(1.1); }
+            100% { transform: rotate(-15deg) scale(1); }
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            background-color: var(--cupra-yellow);
+            color: var(--cupra-dark);
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin-bottom: 2rem; /* Añadido margen inferior */
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+            z-index: -1;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 184, 28, 0.4);
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap; /* Permitir ajuste en pantallas pequeñas */
+        }
+        
+        .footer-link {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--cupra-yellow);
+        }
+        
+        .copyright {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 32px; /* Updated to 32px for mobile as requested */
+                margin-top: 80px; /* Keep consistent positioning */
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .vehicle-selector {
+                gap: 1rem;
+            }
+            
+            .vehicle-card {
+                width: 230px;
+            }
+            
+            .hero {
+                padding-top: 120px; /* Más espacio en la parte superior en móviles */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 32px; /* Ensure consistent font size on very small screens */
+                margin-top: 80px; /* Keep consistent positioning */
+            }
+            
+            .vehicle-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .vehicle-card {
+                width: 90%;
+            }
+            
+            .cta-button {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero {
+                padding-top: 130px; /* Aún más espacio en pantallas muy pequeñas */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="./logo.png" alt="CUPRA Logo" class="logo">
+        <div class="language-selector">
+            <button>ES</button>
+            <button class="active">EN</button>
+        </div>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <img src="./cupra-seat-ok.png" alt="CUPRA Background" class="hero-bg">
+            
+            <div class="hero-content">
+                <h1 class="hero-title animate-fade-in">CUPRA Interactive Manual</h1>
+                <h2 class="hero-subtitle animate-fade-in delay-1">Discover all the details of your next vehicle</h2>
+                
+                <div class="vehicle-selector">
+                    <div class="vehicle-card animate-fade-in delay-2" onclick="selectVehicle(this, 'tavascan')">
+                        <img src="./tavascan.png" alt="CUPRA Tavascan" class="vehicle-image">
+                        <h3 class="vehicle-name">Tavascan</h3>
+                        <p class="vehicle-type">Electric SUV</p>
+                    </div>
+                    
+                    <div class="vehicle-card animate-fade-in delay-2" onclick="selectVehicle(this, 'formentor')">
+                        <img src="./formentor.png" alt="CUPRA Formentor" class="vehicle-image">
+                        <h3 class="vehicle-name">Formentor</h3>
+                        <p class="vehicle-type">SUV Coupé</p>
+                    </div>
+                    
+                    <div class="vehicle-card animate-fade-in delay-3" onclick="selectVehicle(this, 'leon')">
+                        <img src="./leon.png" alt="CUPRA León" class="vehicle-image">
+                        <h3 class="vehicle-name">León</h3>
+                        <p class="vehicle-type">Sports Compact</p>
+                    </div>
+                    
+                    <div class="vehicle-card animate-fade-in delay-3" onclick="selectVehicle(this, 'born')">
+                        <img src="./born.png" alt="CUPRA Born" class="vehicle-image">
+                        <h3 class="vehicle-name">Born</h3>
+                        <p class="vehicle-type">Compact Electric</p>
+                    </div>
+                    
+                    <div class="vehicle-card coming-soon animate-fade-in delay-4">
+                        <div class="coming-soon-overlay">
+                            <span>Coming Soon</span>
+                        </div>
+                        <img src="./shhhh.png" alt="Próximo modelo CUPRA" class="vehicle-image">
+                        <h3 class="vehicle-name">Shhhh</h3>
+                        <p class="vehicle-type">Premium Gasoline Petroleum Freedom</p>
+                    </div>
+                </div>
+                
+                <button id="startButton" class="cta-button animate-fade-in delay-4" disabled>Explore Now</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Sobre CUPRA</a>
+            <a href="#" class="footer-link">Contacto</a>
+            <a href="#" class="footer-link">Política de Privacidad</a>
+            <a href="#" class="footer-link">Términos y Condiciones</a>
+        </div>
+        <p class="copyright">© 2025 CUPRA. Todos los derechos reservados.</p>
+    </footer>
+    
+    <script>
+        // Variables
+        let selectedVehicle = null;
+        const startButton = document.getElementById('startButton');
+        const languageButtons = document.querySelectorAll('.language-selector button');
+        
+        // Funciones
+        function selectVehicle(element, vehicleId) {
+            // Eliminar clase active de todas las tarjetas
+            document.querySelectorAll('.vehicle-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Añadir clase active a la tarjeta seleccionada
+            element.classList.add('active');
+            
+            // Guardar vehículo seleccionado
+            selectedVehicle = vehicleId;
+            console.log("Vehicle selected:", vehicleId);
+            
+            // Habilitar botón
+            startButton.disabled = false;
+        }
+        
+        // Event listeners
+        startButton.addEventListener('click', () => {
+            if (selectedVehicle) {
+                console.log("Navigating to:", selectedVehicle + ".html");
+                
+                // Simplified navigation - always go to the corresponding HTML page
+                window.location.href = selectedVehicle + ".html";
+                
+                // Removing the old switch case code that had 3D viewer references
+                // No need for special case handling anymore
+            }
+        });
+        
+        // Cambio de idioma
+        languageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Eliminar clase active de todos los botones
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Añadir clase active al botón clickeado
+                button.classList.add('active');
+                
+                // Aquí iría la lógica para cambiar el idioma
+                const language = button.textContent;
+                console.log(`Cambiando idioma a: ${language}`);
+                
+                // Ejemplo de implementación simple para propósitos de demostración
+                const translations = {
+                    'ES': {
+                        title: 'Manual Interactivo CUPRA',
+                        subtitle: 'Descubre todos los detalles de tu próximo vehículo',
+                        button: 'Explorar Ahora',
+                        comingSoon: 'Próximamente',
+                        types: {
+                            tavascan: 'SUV Eléctrico',
+                            formentor: 'SUV Coupé',
+                            leon: 'Compacto Deportivo',
+                            born: 'Eléctrico Compacto',
+                            terramar: 'Híbrido Premium'
+                        },
+                        footer: {
+                            about: 'Sobre CUPRA',
+                            contact: 'Contacto',
+                            privacy: 'Política de Privacidad',
+                            terms: 'Términos y Condiciones',
+                            copyright: '© 2025 CUPRA. Todos los derechos reservados.'
+                        }
+                    },
+                    'EN': {
+                        title: 'CUPRA Interactive Manual',
+                        subtitle: 'Discover all the details of your next vehicle',
+                        button: 'Explore Now',
+                        comingSoon: 'Coming Soon',
+                        types: {
+                            tavascan: 'Electric SUV',
+                            formentor: 'SUV Coupé',
+                            leon: 'Sports Compact',
+                            born: 'Compact Electric',
+                            terramar: 'Premium Hybrid'
+                        },
+                        footer: {
+                            about: 'About CUPRA',
+                            contact: 'Contact',
+                            privacy: 'Privacy Policy',
+                            terms: 'Terms & Conditions',
+                            copyright: '© 2025 CUPRA. All rights reserved.'
+                        }
+                    }
+                };
+                
+                // Actualizar textos
+                if (translations[language]) {
+                    document.querySelector('.hero-title').textContent = translations[language].title;
+                    document.querySelector('.hero-subtitle').textContent = translations[language].subtitle;
+                    startButton.textContent = translations[language].button;
+                    
+                    // Actualizar el texto "Coming Soon"
+                    if (document.querySelector('.coming-soon-overlay span')) {
+                        document.querySelector('.coming-soon-overlay span').textContent = translations[language].comingSoon;
+                    }
+                    
+                    // Actualizar tipos de vehículos
+                    document.querySelectorAll('.vehicle-card').forEach(card => {
+                        const name = card.querySelector('.vehicle-name').textContent.toLowerCase();
+                        const typeElement = card.querySelector('.vehicle-type');
+                        
+                        for (const key in translations[language].types) {
+                            if (name.includes(key)) {
+                                typeElement.textContent = translations[language].types[key];
+                                break;
+                            }
+                        }
+                    });
+                    
+                    // Traducir footer
+                    const footerLinks = document.querySelectorAll('.footer-link');
+                    if (footerLinks[0]) footerLinks[0].textContent = translations[language].footer.about;
+                    if (footerLinks[1]) footerLinks[1].textContent = translations[language].footer.contact;
+                    if (footerLinks[2]) footerLinks[2].textContent = translations[language].footer.privacy;
+                    if (footerLinks[3]) footerLinks[3].textContent = translations[language].footer.terms;
+                    
+                    // Traducir copyright
+                    document.querySelector('.copyright').textContent = translations[language].footer.copyright;
+                }
+            });
+        });
+        
+        // Initialize with English language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.animate-fade-in');
+            elements.forEach(element => {
+                element.style.opacity = '0';
+            });
+            
+            setTimeout(() => {
+                elements.forEach(element => {
+                    element.style.opacity = '1';
+                });
+            }, 100);
+            
+            // Asegurar que la página sea desplazable
+            document.body.style.overflow = 'auto';
+            
+            // Set initial language to English
+            const enButton = document.querySelector('.language-selector button:nth-child(2)');
+            if (enButton) {
+                const language = enButton.textContent;
+                const translations = {
+                    'EN': {
+                        title: 'CUPRA Interactive Manual',
+                        subtitle: 'Discover all the details of your next vehicle',
+                        button: 'Explore Now',
+                        comingSoon: 'Coming Soon',
+                        types: {
+                            tavascan: 'Electric SUV',
+                            formentor: 'SUV Coupé',
+                            leon: 'Sports Compact',
+                            born: 'Compact Electric',
+                            terramar: 'Premium Hybrid'
+                        },
+                        footer: {
+                            about: 'About CUPRA',
+                            contact: 'Contact',
+                            privacy: 'Privacy Policy',
+                            terms: 'Terms & Conditions',
+                            copyright: '© 2025 CUPRA. All rights reserved.'
+                        }
+                    }
+                };
+                
+                // Already set in HTML, but ensure correct data is loaded
+                document.querySelector('.hero-title').textContent = translations['EN'].title;
+                document.querySelector('.hero-subtitle').textContent = translations['EN'].subtitle;
+                startButton.textContent = translations['EN'].button;
+                
+                // Set footer text to English on page load
+                const footerLinks = document.querySelectorAll('.footer-link');
+                if (footerLinks[0]) footerLinks[0].textContent = translations['EN'].footer.about;
+                if (footerLinks[1]) footerLinks[1].textContent = translations['EN'].footer.contact;
+                if (footerLinks[2]) footerLinks[2].textContent = translations['EN'].footer.privacy;
+                if (footerLinks[3]) footerLinks[3].textContent = translations['EN'].footer.terms;
+                
+                // Set copyright text to English on page load
+                document.querySelector('.copyright').textContent = translations['EN'].footer.copyright;
+            }
+        });
+    </script>
+</body>
+</html>

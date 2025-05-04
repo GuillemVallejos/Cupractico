@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Millennium Falcon</title>
+		<link rel="stylesheet" href="public/index.css">
+		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://unpkg.com/three@v0.163.0/build/three.module.js",
+					"three/addons/": "https://unpkg.com/three@v0.163.0/examples/jsm/"
+				}
+			}
+		</script>
+		<style>
+			canvas { display: block; touch-action: none; }
+			
+			/* Hotspot container */
+			#hotspot-container {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
+				overflow: hidden;
+			}
+			
+			/* Hotspot styling */
+			.hotspot {
+				position: absolute;
+				width: 24px;
+				height: 24px;
+				border-radius: 50%;
+				background-color: rgba(255, 184, 28, 0.9);
+				border: 2px solid rgba(193, 149, 91, 1);
+				box-shadow: 0 0 8px rgba(193, 149, 91, 0.6);
+				cursor: pointer;
+				transform: translate(-50%, -50%);
+				transition: all 0.2s ease;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 10;
+				color: #333;
+				font-weight: bold;
+				pointer-events: auto;
+			}
+			
+			.hotspot:hover {
+				background-color: rgba(193, 149, 91, 1);
+				color: white;
+				transform: translate(-50%, -50%) scale(1.2);
+			}
+			
+			/* Expandable content */
+			.hotspot-content {
+				position: absolute;
+				background-color: rgba(26, 26, 26, 0.95);
+				border: 1px solid rgba(193, 149, 91, 0.8);
+				border-radius: 8px;
+				padding: 15px;
+				width: 280px;
+				box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+				z-index: 20;
+				display: none;
+				pointer-events: auto;
+				color: #fff;
+				font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+			}
+			
+			.hotspot-content h3 {
+				color: rgba(255, 184, 28, 1);
+				margin-top: 0;
+				margin-bottom: 10px;
+				font-size: 16px;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
+			
+			.hotspot-description {
+				margin: 10px 0;
+				line-height: 1.5;
+				font-size: 14px;
+				color: #e0e0e0;
+			}
+			
+			.redirect-button {
+				background-color: rgba(193, 149, 91, 0.9);
+				color: white;
+				border: none;
+				padding: 8px 16px;
+				border-radius: 4px;
+				cursor: pointer;
+				margin-top: 12px;
+				font-size: 12px;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				font-weight: 600;
+				transition: all 0.2s ease;
+				display: inline-block;
+			}
+			
+			.redirect-button:hover {
+				background-color: rgba(255, 184, 28, 1);
+				transform: translateY(-2px);
+			}
+			
+			.hotspot-content .close-btn {
+				position: absolute;
+				top: 8px;
+				right: 8px;
+				font-size: 18px;
+				cursor: pointer;
+				color: #999;
+				transition: color 0.2s ease;
+			}
+			
+			.hotspot-content .close-btn:hover {
+				color: rgba(255, 184, 28, 1);
+				}
+			
+			/* Help Button - now positioned on the right side */
+			#help-button {
+				position: absolute;
+				top: 20px;
+				right: 20px; /* Changed from left to right */
+				width: 40px;
+				height: 60px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				z-index: 100;
+				background: none;
+				border: none;
+				color: white;
+				transition: transform 0.2s ease;
+			}
+			
+			#help-button:hover {
+				transform: scale(1.1);
+			}
+			
+			#help-button .icon {
+				width: 30px;
+				height: 30px;
+				background-color: rgba(255, 184, 28, 0.9);
+				border: 2px solid rgba(193, 149, 91, 1);
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 18px;
+				font-weight: bold;
+				margin-bottom: 5px;
+				box-shadow: 0 0 8px rgba(193, 149, 91, 0.6);
+			}
+			
+			#help-button .label {
+				font-size: 12px;
+				font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+			
+				/* Home Button - positioned on the left side */
+			#home-button {
+				position: absolute;
+				top: 20px;
+				left: 20px;
+				width: 40px;
+				height: 60px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				z-index: 100;
+				background: none;
+				border: none;
+				color: white;
+				transition: transform 0.2s ease;
+			}
+			
+			#home-button:hover {
+				transform: scale(1.1);
+			}
+			
+			#home-button .icon {
+				width: 80px;
+				height: 80px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-bottom: 5px;
+				margin-left: 15px;
+			}
+			
+			#home-button .icon img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
+			
+			#home-button .label {
+				font-size: 12px;
+				font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+			
+			/* Help Modal */
+			#help-modal {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 80%;
+				max-width: 500px;
+				background-color: rgba(26, 26, 26, 0.95);
+				border: 2px solid rgba(193, 149, 91, 0.8);
+				border-radius: 8px;
+				padding: 25px;
+				z-index: 1000;
+				color: white;
+				font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+				display: none;
+				box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+			}
+			
+			#help-modal h2 {
+				color: rgba(255, 184, 28, 1);
+				margin-top: 0;
+				border-bottom: 1px solid rgba(193, 149, 91, 0.5);
+				padding-bottom: 10px;
+				margin-bottom: 20px;
+			}
+			
+			#help-modal p {
+				margin-bottom: 15px;
+				line-height: 1.6;
+			}
+			
+			#help-modal ul {
+				padding-left: 20px;
+				margin-bottom: 15px;
+			}
+			
+			#help-modal li {
+				margin-bottom: 8px;
+			}
+			
+			#help-modal .close-modal {
+				position: absolute;
+				top: 15px;
+				right: 15px;
+				font-size: 24px;
+				color: rgba(193, 149, 91, 0.8);
+				cursor: pointer;
+				transition: color 0.2s ease;
+				width: 30px;
+				height: 30px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 50%;
+			}
+			
+			#help-modal .close-modal:hover {
+				color: rgba(255, 184, 28, 1);
+			}
+			
+			#help-modal .key {
+				display: inline-block;
+				background-color: rgba(193, 149, 91, 0.3);
+				border: 1px solid rgba(193, 149, 91, 0.6);
+				border-radius: 4px;
+				padding: 2px 8px;
+				margin: 0 3px;
+				font-family: monospace;
+			}
+			
+			#modal-backdrop {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+				z-index: 999;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="heading">
+			<!-- <h1>THE MILLENNIUM FALCON</h1> -->
+		</div>
+		<div id="progress-container">
+			<!-- <div id="progress">Engaging Hyperdrive...</div> -->
+		</div>
+		<div id="hotspot-container"></div>
+		
+			<!-- Home Button -->
+		<button id="home-button">
+			<div class="icon"><img src="../logo.png" alt="CUPRA Logo"></div>
+		</button>
+		
+		<!-- Help Button (moved to right side) -->
+		<button id="help-button">
+			<div class="icon">?</div>
+			<div class="label">Help</div>
+		</button>
+		
+		<!-- Help Modal -->
+		<div id="modal-backdrop"></div>
+		<div id="help-modal">
+			<span class="close-modal">&times;</span>
+			<h2>Cómo usar este modelo interactivo</h2>
+			<p>Este visualizador te permite explorar el CUPRA Tavascan en 3D e interactuar con sus características principales.</p>
+			
+			<h3>Navegación básica:</h3>
+			<ul>
+				<li><strong>Rotar el modelo:</strong> Haz clic y arrastra con el ratón para ver el vehículo desde diferentes ángulos.</li>
+				<li><strong>Zoom:</strong> Usa la rueda del ratón o pellizca la pantalla (en dispositivos táctiles) para acercar o alejar.</li>
+				<li><strong>Recentrar:</strong> Doble clic sobre el modelo para volver a la vista predeterminada.</li>
+			</ul>
+			
+			<h3>Puntos de interés:</h3>
+			<p>Los puntos marcados con <strong>+</strong> son características interactivas. Haz clic en ellos para obtener información detallada o acceder a funciones especiales.</p>
+			
+			<h3>Botones de acción:</h3>
+			<p>Algunos puntos de interés contienen botones que te permiten explorar características específicas o realizar acciones como:</p>
+			<ul>
+				<li>Ver especificaciones técnicas</li>
+				<li>Explorar el interior del vehículo</li>
+				<li>Acceder a minijuegos y simulaciones</li>
+			</ul>
+			
+			<p>¡Explora todas las características y descubre lo que hace único al CUPRA Tavascan!</p>
+		</div>
+		
+		<script type="module" src="main.js"></script>
+	</body>
+</html>

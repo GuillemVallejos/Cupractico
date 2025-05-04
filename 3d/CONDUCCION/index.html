@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUPRA Arcade Driver</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="../index.html" id="back-button">← Volver</a>
+    <div id="game-container">
+        <div id="world">
+            <div id="sky"></div>
+            <div id="horizon"></div>
+            <canvas id="roadCanvas"></canvas> <!-- For drawing the road -->
+        </div>
+        <div id="cockpit">
+            <!-- Dashboard Image (Step 1) -->
+            <img id="dashboard-image" src="assets/cockpit.png" alt="Cupra Dashboard">
+            <div id="dashboard-elements">
+                <!-- Score Display (Step 2) -->
+                <div id="score-display" class="display-box">Score: 0</div>
+                <!-- Speedometer -->
+                <div id="speed-display" class="display-box">0 km/h</div>
+            </div>
+            <img id="steering-wheel" src="assets/steering_wheel.png" alt="Volante">
+        </div>
+        <div id="instructions">Gira el volante para mantenerte en la carretera</div>
+
+        <!-- Victory Panel (Step 4) -->
+        <div id="victory-panel" class="hidden">
+            <div id="victory-message">
+                <!-- Content added by JS -->
+            </div>
+            <button id="close-victory-panel">Cerrar</button>
+        </div>
+
+        <!-- Letter P Reward Animation (Step 5) -->
+        <div id="letter-p-reward" class="hidden">
+            P
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

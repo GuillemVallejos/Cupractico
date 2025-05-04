@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>CUPRA - Selección de Versiones</title>
+    <meta name="description" content="Selecciona la versión de tu modelo CUPRA favorito"/>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16"/>
+    <!-- Importación de fuente personalizada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Variables y estilos base */
+        :root {
+            --cupra-copper: #C1955B;
+            --cupra-yellow: #FFB81C;
+            --cupra-dark: #1A1A1A;
+            --cupra-gray: #333333;
+            --cupra-light: #F5F5F5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        html, body {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        
+        body {
+            background-color: var(--cupra-dark);
+            color: var(--cupra-light);
+            min-height: 100vh;
+            overflow-y: auto; /* Permitir desplazamiento vertical */
+        }
+        
+        /* Elementos de navegación */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 48px; /* Added right padding to match content margin */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, 
+                rgba(0,0,0,0.95) 0%, 
+                rgba(0,0,0,0.85) 40%, 
+                rgba(0,0,0,0.7) 70%, 
+                rgba(0,0,0,0.4) 90%,
+                rgba(0,0,0,0) 100%);
+            height: 80px; /* Altura fija para el header */
+            box-shadow: 0 6px 12px -6px rgba(0,0,0,0.5);
+        }
+        
+        .logo {
+            height: 4rem; /* Tamaño reducido para evitar que ocupe demasiado espacio */
+            width: auto;
+        }
+        
+        .language-selector button {
+            background-color: rgba(51, 51, 51, 0.7);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .language-selector button:hover {
+            background-color: var(--cupra-copper);
+        }
+        
+        .language-selector button.active {
+            background-color: var(--cupra-yellow);
+            color: black;
+        }
+        
+        .back-button {
+            background-color: rgba(51, 51, 51, 0.7);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .back-button:hover {
+            background-color: var(--cupra-copper);
+        }
+        
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Contenido principal */
+        .main-content {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            padding: 100px 20px 40px;
+        }
+        
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            filter: brightness(0.5);
+            z-index: -1;
+        }
+        
+        /* Encabezado del modelo */
+        .model-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+        
+        .model-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--cupra-yellow);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .model-subtitle {
+            font-size: 1.2rem;
+            color: var(--cupra-light);
+            margin-bottom: 2rem;
+            max-width: 700px;
+        }
+        
+        .model-image {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Selección de versiones */
+        .versions-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--cupra-copper);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .versions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .version-card {
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .version-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cupra-yellow);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .version-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cupra-copper), var(--cupra-yellow));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .version-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .version-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+        
+        .version-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .version-tag {
+            background-color: rgba(193, 149, 91, 0.2);
+            color: var(--cupra-copper);
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .version-specs {
+            margin-bottom: 1.5rem;
+        }
+        
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            position: relative;
+        }
+        
+        .spec-label {
+            color: #999;
+            padding-right: 100px; /* Añadir espacio a la derecha del label */
+            min-width: 100px; /* Ancho mínimo para el label */
+        }
+        
+        .spec-value {
+            color: white;
+            font-weight: 500;
+            text-align: right; /* Alinear los valores a la derecha */
+            flex-grow: 20; /* Permitir que ocupe el espacio restante */
+        }
+        
+        .version-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--cupra-yellow);
+            margin-top: 1rem;
+            text-align: right;
+        }
+        
+        .version-cta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .available-label {
+            font-size: 0.8rem;
+            color: #66c088;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .available-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #66c088;
+            border-radius: 50%;
+        }
+        
+        .select-button {
+            background-color: transparent;
+            border: 2px solid var(--cupra-yellow);
+            color: var(--cupra-yellow);
+            padding: 0.5rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .select-button:hover {
+            background-color: var(--cupra-yellow);
+            color: var(--cupra-dark);
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 1s; }
+        
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+            margin-top: 3rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--cupra-yellow);
+        }
+        
+        .copyright {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Comparativa flotante */
+        .comparison-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(26, 26, 26, 0.95);
+            padding: 1rem;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 50;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+        
+        .comparison-bar.active {
+            transform: translateY(0);
+            display: flex;
+        }
+        
+        .comparison-count {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .comparison-count-number {
+            background-color: var(--cupra-yellow);
+            color: black;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .comparison-text {
+            font-weight: 500;
+        }
+        
+        .compare-button {
+            background-color: var(--cupra-yellow);
+            color: var(--cupra-dark);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .compare-button:hover {
+            background-color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .model-title {
+                font-size: 2.5rem;
+            }
+            
+            .model-subtitle {
+                font-size: 1rem;
+            }
+            
+            .versions-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .model-title {
+                font-size: 2rem;
+            }
+            
+            .model-header {
+                margin-bottom: 1.5rem;
+            }
+            
+            .version-card {
+                padding: 1rem;
+            }
+            
+            .version-name {
+                font-size: 1.1rem;
+            }
+            
+            .version-price {
+                font-size: 1.4rem;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        
+        /* NEW STYLES FOR MODEL SLIDER */
+        .model-slider-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0 20px;
+        }
+        
+        .model-slider {
+            overflow: hidden;
+            position: relative;
+            border-radius: 8px;
+        }
+        
+        .model-slides {
+            display: flex;
+            transition: transform 0.4s ease;
+        }
+        
+        .model-slide {
+            min-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(51, 51, 51, 0.7);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-arrow:hover {
+            background-color: var(--cupra-copper);
+        }
+        
+        .slider-prev {
+            left: -20px;
+        }
+        
+        .slider-next {
+            right: -20px;
+        }
+        
+        .slider-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 1rem;
+        }
+        
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+        
+        .slider-dot.active {
+            background-color: var(--cupra-yellow);
+        }
+        
+        .select-model-button {
+            background-color: var(--cupra-yellow);
+            color: var(--cupra-dark);
+            border: none;
+            padding: 0.8rem 3rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .select-model-button:hover {
+            background-color: white;
+        }
+        
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(26, 26, 26, 0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .loading-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-logo {
+            width: 180px;
+            margin-bottom: 30px;
+        }
+        
+        .loading-text {
+            color: var(--cupra-yellow);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid var(--cupra-yellow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-progress {
+            width: 250px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--cupra-yellow);
+            border-radius: 10px;
+            transition: width 3s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <button class="back-button" onclick="goBack()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+            </button>
+        </div>
+        <img src="./logo.png" alt="CUPRA Logo" class="logo">
+        <div class="language-selector">
+            <button>ES</button>
+            <button class="active">EN</button>
+        </div>
+    </header>
+    
+    <main class="main-content">
+        <img src="./tavascan.png" alt="CUPRA Tavascan Background" class="bg-image">
+        
+        <section class="model-header animate-fade-in">
+            <h1 class="model-title" id="modelTitle">CUPRA Tavascan</h1>
+            <p class="model-subtitle">Discover all versions of CUPRA's first 100% electric SUV coupé, designed to combine sportiness and sustainability.</p>
+            <img src="./tavascan.png" alt="CUPRA Tavascan" class="model-image">
+        </section>
+        
+        <h2 class="versions-title animate-fade-in delay-1">Select your version</h2>
+        
+        <!-- Replace versions-container with model-slider-container -->
+        <div class="model-slider-container animate-fade-in delay-2">
+            <button class="slider-arrow slider-prev" id="prevModel">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            
+            <div class="model-slider">
+                <div class="model-slides" id="modelSlides">
+                    <!-- Tavascan VZ -->
+                    <div class="model-slide" data-model-id="tavascan-vz">
+                        <div class="version-name">Tavascan VZ</div>
+                        <div class="version-tags">
+                            <span class="version-tag">VZ Performance</span>
+                            <span class="version-tag">4WD</span>
+                            <span class="version-tag">Eléctrico</span>
+                        </div>
+                        <div class="version-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Potencia</span>
+                                <span class="spec-value">340 CV</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Autonomía</span>
+                                <span class="spec-value">548 km</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">0-100 km/h</span>
+                                <span class="spec-value">5.6 s</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Batería</span>
+                                <span class="spec-value">77 kWh</span>
+                            </div>
+                        </div>
+                        <div class="version-price">59.990 €</div>
+                        <button class="select-model-button" onclick="selectModel('tavascan-vz')">Select</button>
+                    </div>
+                    
+                    <!-- Tavascan Endurance -->
+                    <div class="model-slide" data-model-id="tavascan-endurance">
+                        <div class="version-name">Tavascan Endurance</div>
+                        <div class="version-tags">
+                            <span class="version-tag">Gran Autonomía</span>
+                            <span class="version-tag">RWD</span>
+                            <span class="version-tag">Eléctrico</span>
+                        </div>
+                        <div class="version-specs">
+                            <div class="spec-item">
+                                <span class="spec-label">Potencia</span>
+                                <span class="spec-value">286 CV</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Autonomía</span>
+                                <span class="spec-value">624 km</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">0-100 km/h</span>
+                                <span class="spec-value">6.8 s</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Batería</span>
+                                <span class="spec-value">82 kWh</span>
+                            </div>
+                        </div>
+                        <div class="version-price">53.900 €</div>
+                        <button class="select-model-button" onclick="selectModel('tavascan-endurance')">Select</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="slider-arrow slider-next" id="nextModel">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24" height="24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+            
+            <div class="slider-nav" id="sliderNav">
+                <div class="slider-dot active" data-index="0"></div>
+                <div class="slider-dot" data-index="1"></div>
+            </div>
+        </div>
+    </main>
+    
+    <div class="comparison-bar" id="comparisonBar">
+        <div class="comparison-count">
+            <div class="comparison-count-number" id="comparisonCount">0</div>
+            <div class="comparison-text">Selected versions</div>
+        </div>
+        <button class="compare-button" id="compareButton" disabled>Compare</button>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Sobre CUPRA</a>
+            <a href="#" class="footer-link">Contacto</a>
+            <a href="#" class="footer-link">Política de Privacidad</a>
+            <a href="#" class="footer-link">Términos y Condiciones</a>
+        </div>
+        <p class="copyright">© 2025 CUPRA. Todos los derechos reservados.</p>
+    </footer>
+    
+    <div class="loading-screen" id="loadingScreen">
+        <img src="./logo.png" alt="CUPRA Logo" class="loading-logo">
+        <div class="loading-text" id="loadingText">Loading 3D Model</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loadingProgressBar"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables
+        let selectedVersions = [];
+        const maxComparisons = 3;
+        const comparisonBar = document.getElementById('comparisonBar');
+        const comparisonCount = document.getElementById('comparisonCount');
+        const compareButton = document.getElementById('compareButton');
+        const languageButtons = document.querySelectorAll('.language-selector button');
+        
+        // Model slider variables
+        let currentSlideIndex = 0;
+        const totalSlides = 2; // Only two models: VZ and Endurance
+        const sliderElement = document.getElementById('modelSlides');
+        const dots = document.querySelectorAll('.slider-dot');
+        
+        // Initialize slider
+        function initSlider() {
+            const prevButton = document.getElementById('prevModel');
+            const nextButton = document.getElementById('nextModel');
+            
+            // Set up event listeners for slider navigation
+            prevButton.addEventListener('click', () => {
+                currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+                updateSlider();
+            });
+            
+            nextButton.addEventListener('click', () => {
+                currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+                updateSlider();
+            });
+            
+            // Set up dots for navigation
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    currentSlideIndex = parseInt(dot.getAttribute('data-index'));
+                    updateSlider();
+                });
+            });
+            
+            // Initial slide position
+            updateSlider();
+        }
+        
+        // Update slider position
+        function updateSlider() {
+            sliderElement.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+            
+            // Update active dot
+            dots.forEach((dot, index) => {
+                if (index === currentSlideIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // Select model function - Modified to show loading screen before redirecting
+        function selectModel(modelId) {
+            // Show loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgressBar = document.getElementById('loadingProgressBar');
+            const loadingText = document.getElementById('loadingText');
+            
+            // Update loading text with selected model
+            loadingText.textContent = `Loading ${modelId.split('-').join(' ')} 3D Model`;
+            
+            // Show loading screen
+            loadingScreen.classList.add('active');
+            
+            // Animate progress bar
+            setTimeout(() => {
+                loadingProgressBar.style.width = "100%";
+            }, 50);
+            
+            // Simulate loading time (3 seconds) before redirecting
+            setTimeout(() => {
+                // Redirect to the 3D model viewer with the selected model as a parameter
+                window.location.href = `3d/index.html?model=${modelId}`;
+            }, 3000);
+        }
+        
+        // Configuración de modelos
+        const modelConfig = {
+            'tavascan': {
+                name: 'CUPRA Tavascan',
+                background: './tavascan.png',
+                image: './tavascan.png',
+                description: {
+                    'ES': 'Descubre todas las versiones del primer SUV coupé 100% eléctrico de CUPRA, diseñado para combinar deportividad y sostenibilidad.',
+                    'EN': 'Discover all versions of CUPRA\'s first 100% electric SUV coupé, designed to combine sportiness and sustainability.'
+                }
+            },
+            'formentor': {
+                name: 'CUPRA Formentor',
+                background: './formentor-bg.jpg',
+                image: './formentor-hero.jpg',
+                description: {
+                    'ES': 'Explora las distintas versiones del SUV coupé que redefine la deportividad, con opciones de motorización para cada tipo de conductor.',
+                    'EN': 'Explore the different versions of the SUV coupé that redefines sportiness, with powertrain options for every type of driver.'
+                }
+            },
+            'leon': {
+                name: 'CUPRA León',
+                background: './leon-bg.jpg',
+                image: './leon-hero.jpg',
+                description: {
+                    'ES': 'Elige entre las diferentes versiones del compacto deportivo que combina diseño audaz, tecnología y altas prestaciones.',
+                    'EN': 'Choose between the different versions of the sports compact that combines bold design, technology and high performance.'
+                }
+            },
+            'born': {
+                name: 'CUPRA Born',
+                background: './born-bg.jpg',
+                image: './born-hero.jpg',
+                description: {
+                    'ES': 'Selecciona la versión perfecta del primer 100% eléctrico de CUPRA, que aúna sostenibilidad con carácter deportivo.',
+                    'EN': 'Select the perfect version of CUPRA\'s first 100% electric car, which combines sustainability with a sporty character.'
+                }
+            }
+        };
+        
+        // Traducciones
+        const translations = {
+            'ES': {
+                back: 'Volver',
+                selectionTitle: 'Selecciona tu versión',
+                available: 'Disponible',
+                limitedEdition: 'Edición Limitada',
+                comingSoon: 'Próximamente',
+                earlyReservation: 'Reserva Anticipada',
+                select: 'Seleccionar',
+                reserve: 'Reservar',
+                compareButton: 'Comparar',
+                selectedVersions: 'Versiones seleccionadas',
+                specs: {
+                    'power': 'Potencia',
+                    'range': 'Autonomía',
+                    'acceleration': '0-100 km/h',
+                    'battery': 'Batería'
+                },
+                versionTags: {
+                    'performance': 'Alto Rendimiento',
+                    'entry': 'Entrada de Gama',
+                    'special': 'Edición Especial',
+                    'new2025': 'Nuevo 2025',
+                    'vz': 'VZ Performance',
+                    'range': 'Gran Autonomía',
+                    'electric': 'Eléctrico',
+                    '4wd': '4WD',
+                    'rwd': 'RWD'
+                },
+                footer: {
+                    'about': 'Sobre CUPRA',
+                    'contact': 'Contacto',
+                    'privacy': 'Política de Privacidad',
+                    'terms': 'Términos y Condiciones',
+                    'copyright': '© 2025 CUPRA. Todos los derechos reservados.'
+                }
+            },
+            'EN': {
+                back: 'Back',
+                selectionTitle: 'Select your version',
+                available: 'Available',
+                limitedEdition: 'Limited Edition',
+                comingSoon: 'Coming Soon',
+                earlyReservation: 'Early Reservation',
+                select: 'Select',
+                reserve: 'Reserve',
+                compareButton: 'Compare',
+                selectedVersions: 'Selected versions',
+                specs: {
+                    'power': 'Power',
+                    'range': 'Range',
+                    'acceleration': '0-100 km/h',
+                    'battery': 'Battery'
+                },
+                versionTags: {
+                    'performance': 'High Performance',
+                    'entry': 'Entry Level',
+                    'special': 'Special Edition',
+                    'new2025': 'New 2025',
+                    'vz': 'VZ Performance',
+                    'range': 'Long Range',
+                    'electric': 'Electric',
+                    '4wd': '4WD',
+                    'rwd': 'RWD'
+                },
+                footer: {
+                    'about': 'About CUPRA',
+                    'contact': 'Contact',
+                    'privacy': 'Privacy Policy',
+                    'terms': 'Terms & Conditions',
+                    'copyright': '© 2025 CUPRA. All rights reserved.'
+                }
+            }
+        };
+        
+        // Función para volver a la página anterior
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+        
+        // Función para seleccionar versión - Modified to not redirect to car-viewer.html
+        function selectVersion(element, versionId) {
+            // Show selection message
+            alert('You selected the ' + versionId + ' version. Configure your vehicle in the next step.');
+        }
+        
+        // Event listeners para cambio de idioma
+        languageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Eliminar clase active de todos los botones
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                // Añadir clase active al botón clickeado
+                button.classList.add('active');
+                // Cambiar idioma
+                const language = button.textContent;
+                changeLanguage(language);
+            });
+        });
+        
+        // Función para cambiar el idioma
+        function changeLanguage(language) {
+            // Actualizar textos basados en traducciones
+            if (translations[language]) {
+                // Implementación del cambio de idioma
+                document.querySelector('.back-button').innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    ${translations[language].back}
+                `;
+                document.querySelector('.versions-title').textContent = translations[language].selectionTitle;
+                
+                // Actualizar botones de selección
+                document.querySelectorAll('.select-button').forEach(button => {
+                    button.textContent = translations[language].select;
+                });
+                document.querySelectorAll('.select-model-button').forEach(button => {
+                    button.textContent = language === 'ES' ? 'Seleccionar' : 'Select';
+                });
+                
+                // Actualizar botón de comparar y texto
+                compareButton.textContent = translations[language].compareButton;
+                document.querySelector('.comparison-text').textContent = translations[language].selectedVersions;
+                
+                // Actualizar etiquetas de especificaciones
+                document.querySelectorAll('.model-slide').forEach(slide => {
+                    const specLabels = slide.querySelectorAll('.spec-label');
+                    
+                    // Actualizar las etiquetas de especificaciones según su posición
+                    if (specLabels[0]) specLabels[0].textContent = translations[language].specs.power;
+                    if (specLabels[1]) specLabels[1].textContent = translations[language].specs.range;
+                    if (specLabels[2]) specLabels[2].textContent = translations[language].specs.acceleration;
+                    if (specLabels[3]) specLabels[3].textContent = translations[language].specs.battery;
+                    
+                    // Traducir las etiquetas de versión
+                    const versionTags = slide.querySelectorAll('.version-tag');
+                    versionTags.forEach(tag => {
+                        // Determinar qué tag es y traducirlo
+                        if (tag.textContent.includes('VZ') || tag.textContent.includes('Performance')) {
+                            tag.textContent = translations[language].versionTags.vz;
+                        } else if (tag.textContent.includes('Gran') || tag.textContent.includes('Long')) {
+                            tag.textContent = translations[language].versionTags.range;
+                        } else if (tag.textContent.includes('Eléctrico') || tag.textContent.includes('Electric')) {
+                            tag.textContent = translations[language].versionTags.electric;
+                        } else if (tag.textContent.includes('4WD')) {
+                            tag.textContent = translations[language].versionTags['4wd'];
+                        } else if (tag.textContent.includes('RWD')) {
+                            tag.textContent = translations[language].versionTags.rwd;
+                        }
+                    });
+                });
+                
+                // Traducir footer
+                const footerLinks = document.querySelectorAll('.footer-link');
+                if (footerLinks[0]) footerLinks[0].textContent = translations[language].footer.about;
+                if (footerLinks[1]) footerLinks[1].textContent = translations[language].footer.contact;
+                if (footerLinks[2]) footerLinks[2].textContent = translations[language].footer.privacy;
+                if (footerLinks[3]) footerLinks[3].textContent = translations[language].footer.terms;
+                
+                // Traducir copyright
+                document.querySelector('.copyright').textContent = translations[language].footer.copyright;
+            }
+        }
+        
+        // Initialize with English language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial language to English
+            const language = 'EN';
+            changeLanguage(language);
+            
+            // Initialize the model slider
+            initSlider();
+        });
+    </script>
+</body>
+</html>
